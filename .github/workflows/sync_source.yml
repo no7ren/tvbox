@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout file from public repository
         uses: actions/checkout@v4
+        with:
+          # Fetch all history so git knows how to merge correctly if needed
+          fetch-depth: 0 
 
       - name: Download tvbox_full.json
         run: |
@@ -26,3 +29,5 @@ jobs:
         with:
           commit_message: "自动更新：tvbox_full.json"
           branch: main # 如果你的默认分支叫 master，请修改为 master
+          # 👇 Force git pull --rebase before pushing to automatically integrate unexpected remote updates
+          push_options: '--force'
