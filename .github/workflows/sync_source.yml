@@ -38,6 +38,8 @@ jobs:
             echo "No changes detected. The file is already identical to the upstream copy."
           else
             git commit -m "Auto-sync latest tvbox_full.json"
+            # 🔄 Pull down the newest changes from the remote server and stack our commit cleanly on top
+            git pull origin main --rebase
             # 🔥 Force-push to overwrite any synchronization conflicts directly
             git push origin main --force
           fi
