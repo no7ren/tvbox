@@ -29,10 +29,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@://github.com"
           
-          # ⚓ Force the runner out of "detached HEAD" and onto your live branch
-          # (Change 'main' to 'master' below if your branch is named master)
-          git checkout main
-          
           git add tvbox_full.json
           
           if git diff-index --quiet HEAD --; then
@@ -40,10 +36,8 @@ jobs:
           else
             git commit -m "Auto-sync latest tvbox_full.json"
             
-            # Fetch the absolute latest remote state to resolve historical lag
-            git fetch origin main
-            git rebase origin/main
-            
-            git push origin main
+            # 🔥 Force-push using the exact fully qualified path to override the non-fast-forward rule
+            # Change 'main' to 'master' on the line below if your branch name is master
+            git push origin HEAD:refs/heads/main --force
           fi
 
