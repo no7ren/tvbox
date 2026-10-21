@@ -24,10 +24,21 @@ jobs:
           # 使用 curl 直接下载该文件的原始 Raw 数据并覆盖保存到你本地仓库的根目录
           curl -L -o "tvbox_full.json" "https://raw.githubusercontent.com/25175/tvyuan/refs/heads/master/tvbox_full.json"
 
-      - name: Commit and Push changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "自动更新：tvbox_full.json"
-          branch: main # 如果你的默认分支叫 master，请修改为 master
-          # 👇 Force git pull --rebase before pushing to automatically integrate unexpected remote updates
-          push_options: '--force'
+      - name: 3. Native Force Push Changes
+        run: |
+          # Configure a temporary Git identity for the GitHub runner bot
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Stage the freshly downloaded file
+          git add tvbox_full.json
+          
+          # Check if there are actual new differences to commit
+          if git diff-index --quiet HEAD --; then
+            echo "No changes detected. The file is already identical to the upstream copy."
+          else
+            git commit -m "Auto-sync latest tvbox_full.json"
+            # 🔥 Force-push to overwrite any synchronization conflicts directly
+            git push origin main --force
+          fi
+
