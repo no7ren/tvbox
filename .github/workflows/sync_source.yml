@@ -26,21 +26,24 @@ jobs:
 
       - name: 3. Native Force Push Changes
         run: |
-          # Configure a temporary Git identity for the GitHub runner bot
           git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "github-actions[bot]@://github.com"
           
-          # Stage the freshly downloaded file
+          # ⚓ Force the runner out of "detached HEAD" and onto your live branch
+          # (Change 'main' to 'master' below if your branch is named master)
+          git checkout main
+          
           git add tvbox_full.json
           
-          # Check if there are actual new differences to commit
           if git diff-index --quiet HEAD --; then
-            echo "No changes detected. The file is already identical to the upstream copy."
+            echo "No changes detected. The file matches upstream."
           else
             git commit -m "Auto-sync latest tvbox_full.json"
-            # 🔄 Pull down the newest changes from the remote server and stack our commit cleanly on top
-            git pull origin main --rebase
-            # 🔥 Force-push to overwrite any synchronization conflicts directly
-            git push origin main --force
+            
+            # Fetch the absolute latest remote state to resolve historical lag
+            git fetch origin main
+            git rebase origin/main
+            
+            git push origin main
           fi
 
