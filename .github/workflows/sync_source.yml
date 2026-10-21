@@ -1,0 +1,25 @@
+name: Daily Sync TVBox JSON
+
+on:
+  schedule:
+    # 每天北京时间早上 8:00 执行 (UTC 时间 0:00)
+    - cron: '0 0 * * *'
+  workflow_dispatch: # 允许你手动点击按钮随时触发更新
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout file from public repository
+        uses: actions/checkout@v4
+
+      - name: Download tvbox_full.json
+        run: |
+          # 使用 curl 直接下载该文件的原始 Raw 数据并覆盖保存到你本地仓库的根目录
+          curl -L -o "tvbox_full.json" "https://raw.githubusercontent.com/25175/tvyuan/refs/heads/master/tvbox_full.json"
+
+      - name: Commit and Push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "自动更新：tvbox_full.json"
+          branch: main # 如果你的默认分支叫 master，请修改为 master
