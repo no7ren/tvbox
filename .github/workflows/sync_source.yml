@@ -29,6 +29,7 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@://github.com"
           
+          # Stage and commit changes locally first
           git add tvbox_full.json
           
           if git diff-index --quiet HEAD --; then
@@ -36,8 +37,11 @@ jobs:
           else
             git commit -m "Auto-sync latest tvbox_full.json"
             
-            # 🔥 Force-push using the exact fully qualified path to override the non-fast-forward rule
-            # Change 'main' to 'master' on the line below if your branch name is master
-            git push origin HEAD:refs/heads/main --force
+            # 🔄 Your requested fix: Pull remote updates and place our commit cleanly on top
+            # Change 'main' to 'master' if your branch uses the legacy naming convention
+            git pull origin main --rebase --strategy-option=theirs
+            
+            # Push the combined history safely back to GitHub
+            git push origin main
           fi
 
